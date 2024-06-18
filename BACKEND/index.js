@@ -1,12 +1,19 @@
 const express = require('express')
-app.use(express.json())
 const app = express()
-const PORT = 3000
+app.use(express.json())
 
+const PORT = process.env.PORT || 3000
+
+const { PrismaClient } = require('@prisma/client')
+const prisma = new PrismaClient()
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`)
   })
 
-  app.get('/', (req, res) => {
-    res.send('Welcome to my app!')
-  })
+// Return all the photo objects
+app.get('/photos', async (req, res) => {
+    const photos = await prisma.photo.findMany();
+    res.status(200).json(photos);
+});
+
+

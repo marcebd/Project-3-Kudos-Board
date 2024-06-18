@@ -13,3 +13,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Board {
+  id  Int @id @default(autoincrement()) @unique
+  imgUrl  String
+  title String @unique
+  category Category
+}
+
+enum Category {
+  celebration
+  thank-you
+  inspiration
+  jokes
+  AITA
+}
+
+model Card {
+  id  Int @id @default(autoincrement()) @unique
+  creator String
+  title String
+  message String
+  GIFUrl String
+  signature String
+  upvotes Int
+  board Board @relation(fields:[title], references: [title])
+}
