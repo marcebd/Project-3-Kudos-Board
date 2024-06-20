@@ -71,13 +71,6 @@ app.get('/boards/:id/cards', async (req, res) => {
     }
 });
 
-=======
-//Return all the boards objects
-app.get('/boards', async (req, res) => {
-    const board = await prisma.board.findMany();
-    res.status(200).json(board);
-});
-
 //Create a new board
 app.post('/boards', async (req, res) => {
     const {imgUrl, title, category} = req.body;
@@ -118,22 +111,21 @@ app.delete('/boards/:id', async (req, res) => {
     }
 });
 
-//Get specific board
-app.get('/boards/:id', async (req, res) => {
-    const {id} = req.params;
-    const board = await prisma.board.findUnique(
-        {
-            where: { id: parseInt(id) }
-        });
-    res.status(200).json(board);
-});
-
 /*********************** CARDS ***********************/
-
 // Return all the cards objects
 app.get('/cards', async (req, res) => {
     const card = await prisma.card.findMany();
     res.status(200).json(cards);
+});
+
+//Get specific card
+app.get('/cards/:id', async (req, res) => {
+    const {id} = req.params;
+    const card = await prisma.card.findUnique(
+        {
+            where: { id: parseInt(id) }
+        });
+    res.status(200).json(card);
 });
 
 //Create a new card
@@ -151,6 +143,7 @@ app.post('/cards', async (req, res) => {
     res.status(201).json(newCard);
 });
 
+//Delete a specific card
 app.delete('/cards/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -167,13 +160,4 @@ app.delete('/cards/:id', async (req, res) => {
             res.status(500).send('Error deleting the card');
         }
     }
-  
-//Get specific card
-app.get('/cards/:id', async (req, res) => {
-    const {id} = req.params;
-    const card = await prisma.card.findUnique(
-        {
-            where: { id: parseInt(id) }
-        });
-    res.status(200).json(card);
 });
