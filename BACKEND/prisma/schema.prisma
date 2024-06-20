@@ -18,11 +18,12 @@ model Board {
   imgUrl  String
   title String @unique
   category Category
+  cards Card[]
 }
 
 enum Category {
   celebration
-  thank-you
+  thankyou
   inspiration
   jokes
   AITA
