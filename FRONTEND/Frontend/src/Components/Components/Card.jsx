@@ -1,24 +1,21 @@
 import { useState, useEffect } from 'react';
 
-function Card({ title, message, creator, GIFUrl, id, onDelete, upvotes: initialUpvotes }) {
-    const [upvotes, setUpvotes] = useState(initialUpvotes || 0);
+function Card({ title, message, creator, GIFUrl, id, onDelete, upvotes, onUpvote }) {
+    const [localUpvotes, setLocalUpvotes] = useState(upvotes || 0);
     const [comments, setComments] = useState([]);
     const [showComments, setShowComments] = useState(false);
     const [newComment, setNewComment] = useState('');
     const [commentAuthor, setCommentAuthor] = useState('');
 
     useEffect(() => {
-        // Fetch the initial card details including upvotes
         fetch(`http://localhost:3000/cards/${id}`)
             .then(response => response.json())
             .then(data => {
                 if (data.upvotes) {
-                    setUpvotes(data.upvotes);
+                    setLocalUpvotes(data.upvotes);
                 }
             })
             .catch(error => console.error('Error fetching card details:', error));
-
-        // Fetch comments if the comments section is open
         if (showComments) {
             fetch(`http://localhost:3000/cards/${id}/comments`)
                 .then(response => response.json())
@@ -35,7 +32,10 @@ function Card({ title, message, creator, GIFUrl, id, onDelete, upvotes: initialU
         })
         .then(response => response.json())
         .then(data => {
-            setUpvotes(data.upvotes);
+            setLocalUpvotes(data.upvotes);
+            if (onUpvote) {
+                onUpvote(id, data.upvotes);
+            }
         })
         .catch(error => console.error('Error updating upvotes:', error));
     };
@@ -72,7 +72,7 @@ function Card({ title, message, creator, GIFUrl, id, onDelete, upvotes: initialU
                 <p>{message}</p>
                 <p>Creator: {creator}</p>
                 {GIFUrl && <img src={GIFUrl} alt={title} />}
-                <p>Likes: {upvotes}</p>
+                <p>Upvotes: {upvotes}</p>
                 <button onClick={toggleComments}>{showComments ? 'Hide' : 'View'} Comments</button>
                 {showComments && (
                     <div>
@@ -100,7 +100,7 @@ function Card({ title, message, creator, GIFUrl, id, onDelete, upvotes: initialU
                 )}
             </div>
             <button onClick={() => onDelete(id)}>Delete Card</button>
-            <button onClick={handleUpvote}>Like</button>
+            <button onClick={handleUpvote}>upvote</button>
         </div>
     );
 }

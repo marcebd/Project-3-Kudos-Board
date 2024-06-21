@@ -63,7 +63,8 @@ app.get('/boards/:id/cards', async (req, res) => {
                     title: true,
                     message: true,
                     GIFUrl: true,
-                    creator: true
+                    creator: true,
+                    upvotes: true
                 }
             }
         }
@@ -257,7 +258,7 @@ app.delete('/cards/:id', async (req, res) => {
                 where: { id: cardId }
             });
         });
-        res.status(204).send(); 
+        res.status(204).send();
     } catch (error) {
         if (error.code === 'P2025') {
             // Handle specific case where the card does not exist

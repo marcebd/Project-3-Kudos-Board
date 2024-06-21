@@ -4,14 +4,29 @@ import CardModal from './CardModal';
 
 function CardContainer({ boardId }) {
     const [cards, setCards] = useState([]);
+    const [sortedCards, setSortedCards] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [sortCriteria, setSortCriteria] = useState('upvotes');
 
     useEffect(() => {
         fetchCards();
     }, [boardId]);
 
+    useEffect(() => {
+        const sorted = [...cards].sort((a, b) => {
+            console.log(`Comparing ${a.title} with ${b.title} and ${a.upvotes} with ${b.upvotes}`);
+            if (sortCriteria === 'upvotes') {
+                return b.upvotes - a.upvotes;
+            } else if (sortCriteria === 'alphabetical') {
+                return a.title.localeCompare(b.title);
+            }
+            return 0;
+        });
+        console.log(sorted.map(card => `${card.title}: ${card.upvotes}`));
+        setSortedCards(sorted);
+    }, [cards, sortCriteria]);
     const fetchCards = () => {
         fetch(`http://localhost:3000/boards/${boardId}/cards`)
             .then(response => {
@@ -21,9 +36,13 @@ function CardContainer({ boardId }) {
                 return response.json();
             })
             .then(data => {
-                setCards(data.cards);
+                const cardsWithNumericUpvotes = data.cards.map(card => ({
+                    ...card,
+                    upvotes: Number(card.upvotes)
+                }));
+                console.log("fetch data",data)
+                setCards(cardsWithNumericUpvotes);
                 setLoading(false);
-                console.log(data.cards)
             })
             .catch(error => {
                 console.error('Error fetching cards:', error);
@@ -33,15 +52,25 @@ function CardContainer({ boardId }) {
     };
 
     const handleCreateCard = (newCard) => {
-        setCards(prevCards => [...prevCards, newCard]);
-    }
+        setCards(prevCards => {
+            const updatedCards = [...prevCards, newCard];
+            return updatedCards.sort((a, b) => {
+                if (sortCriteria === 'upvotes') {
+                    return b.upvotes - a.upvotes;
+                } else if (sortCriteria === 'alphabetical') {
+                    return a.title.localeCompare(b.title);
+                }
+                return 0;
+            });
+        });
+    };
 
     const handleDeleteCard = (cardId) => {
         fetch(`${import.meta.env.VITE_BACKEND_ADDRESS}/cards/${cardId}`, {
             method: 'DELETE'
         })
         .then(response => {
-            if(!response.ok){
+            if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             setCards(prevCards => prevCards.filter(card => card.id !== cardId));
@@ -51,7 +80,15 @@ function CardContainer({ boardId }) {
         });
     };
 
-    const cardElements = cards.map(card => (
+    const handleUpvoteChange = (cardId, newUpvotes) => {
+        setCards(cards => cards.map(card => {
+            if (card.id === cardId) {
+                return { ...card, upvotes: newUpvotes };
+            }
+            return card;
+        }));
+    };
+    const cardElements = sortedCards.map(card => (
         <Card
             key={card.id}
             id={card.id}
@@ -61,6 +98,7 @@ function CardContainer({ boardId }) {
             GIFUrl={card.GIFUrl}
             upvotes={card.upvotes}
             onDelete={handleDeleteCard}
+            onUpvote={handleUpvoteChange}
         />
     ));
 
@@ -69,6 +107,10 @@ function CardContainer({ boardId }) {
 
     return (
         <div className='cardContainer'>
+            <select value={sortCriteria} onChange={(e) => setSortCriteria(e.target.value)}>
+                <option value="upvotes">Upvotes</option>
+                <option value="alphabetical">Alphabetically</option>
+            </select>
             <button onClick={() => setIsModalOpen(true)}>Create Card</button>
             {isModalOpen && (
                 <CardModal
