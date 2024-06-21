@@ -7,11 +7,11 @@ import BoardContainer from './BoardContainer';
 function HomeScreen() {
 
     return(
-        <>
+        <div className='homescreen'>
           <Header/>
           <BoardContainer/>
           <Footer/>
-        </>
+        </div>
     )
 
 }

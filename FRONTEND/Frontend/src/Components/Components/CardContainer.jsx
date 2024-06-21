@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Card from './Card';
 import CardModal from './CardModal';
+import './CardContainer.css'
 
 function CardContainer({ boardId }) {
     const [cards, setCards] = useState([]);
@@ -104,20 +105,23 @@ function CardContainer({ boardId }) {
 
     return (
         <div className='cardContainer'>
-            <select value={sortCriteria} onChange={(e) => setSortCriteria(e.target.value)}>
+            <select value={sortCriteria} onChange={(e) => setSortCriteria(e.target.value)} className='sortSelect'>
                 <option value="upvotes">Upvotes</option>
                 <option value="alphabetical">Alphabetically</option>
             </select>
-            <button onClick={() => setIsModalOpen(true)}>Create Card</button>
-            {isModalOpen && (
-                <CardModal
-                    boardId={boardId}
-                    onClose={() => setIsModalOpen(false)}
-                    onCreateCard={handleCreateCard}
-                />
-            )}
+        <button onClick={() => setIsModalOpen(true)} className='createCardButton'>Create Card</button>
+        {isModalOpen && (
+            <CardModal
+                boardId={boardId}
+                onClose={() => setIsModalOpen(false)}
+                onCreateCard={handleCreateCard}
+                className='cardModal'
+            />
+        )}
+        <div className='cardsDisplay'>
             {cardElements}
         </div>
+</div>
     );
 }
 

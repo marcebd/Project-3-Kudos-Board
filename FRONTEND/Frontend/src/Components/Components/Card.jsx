@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-
+import './Card.css'
 function Card({ title, message, creator, GIFUrl, id, onDelete, upvotes, onUpvote }) {
     const [localUpvotes, setLocalUpvotes] = useState(upvotes || 0);
     const [comments, setComments] = useState([]);
@@ -68,20 +68,20 @@ function Card({ title, message, creator, GIFUrl, id, onDelete, upvotes, onUpvote
     return (
         <div className='card'>
             <div className='cardInfo'>
-                <h3>{title}</h3>
-                <p>{message}</p>
-                <p>Creator: {creator}</p>
+                <h3 className='title'>{title}</h3>
+                <p className='message'>{message}</p>
+                <p className='creator'>Creator: {creator}</p>
                 {GIFUrl && <img src={GIFUrl} alt={title} />}
-                <p>Upvotes: {upvotes}</p>
-                <button onClick={toggleComments}>{showComments ? 'Hide' : 'View'} Comments</button>
+                <p className='upvotes'>Upvotes: {upvotes}</p>
+                <button onClick={toggleComments} className='comments'>{showComments ? 'Hide' : 'View'} Comments</button>
                 {showComments && (
-                    <div>
+                    <div className='commentSection'>
                         {comments.length > 0 ? (
                             comments.map(comment => (
-                                <p key={comment.id}>{comment.author}: {comment.content}</p>
+                                <p key={comment.id} className='comment'>{comment.author}: {comment.content}</p>
                             ))
                         ) : (
-                            <p>Be the first to comment</p>
+                            <p className='comment'>Be the first to comment</p>
                         )}
                         <input
                             type="text"
@@ -99,8 +99,10 @@ function Card({ title, message, creator, GIFUrl, id, onDelete, upvotes, onUpvote
                     </div>
                 )}
             </div>
-            <button onClick={() => onDelete(id)}>Delete Card</button>
-            <button onClick={handleUpvote}>upvote</button>
+            <div className='buttons'>
+                <button onClick={() => onDelete(id)} className='delCard'>Delete Card</button>
+                <button onClick={handleUpvote} className='upvoteButton'>upvote</button>
+            </div>
         </div>
     );
 }

@@ -1,0 +1,25 @@
+.BoardDetailsHeader {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    width: 75%;
+    margin: 0 auto;
+    box-shadow: 0px 4px 8px rgba(244, 143, 177, 0.6); 
+    background-color: #fff;
+}
+
+.boardImage {
+    width: 25%;
+    height: auto;
+}
+
+.boardInfo {
+    display: flex;
+    flex-direction: column;
+    width: 75%;
+    align-items: center
+}
+
+.boardTitle, .boardDescription, .category {
+    margin: 5px 0;
+}

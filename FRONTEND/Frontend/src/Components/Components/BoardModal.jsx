@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { GiphyFetch } from '@giphy/js-fetch-api';
+import './BoardContainer.css'
 
 function BoardModal({ closeModal, onCreateBoard }) {
     const apiKey = import.meta.env.VITE_GIPHY_API_KEY;
@@ -8,7 +9,7 @@ function BoardModal({ closeModal, onCreateBoard }) {
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState('celebration');
     const [description, setDescription] = useState('');
-    const [author, setAuthor] = useState('');  // New state for author
+    const [author, setAuthor] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [images, setImages] = useState([]);
     const [showSelectedImage, setShowSelectedImage] = useState(false);
@@ -34,7 +35,7 @@ function BoardModal({ closeModal, onCreateBoard }) {
                     title,
                     category,
                     description,
-                    author  // Include author in the request body
+                    author
                 })
             });
             if (!response.ok) {
@@ -75,76 +76,82 @@ function BoardModal({ closeModal, onCreateBoard }) {
 
     return (
         <div className='modal'>
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Board Name:
-                    <input
-                        type='text'
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                    />
-                </label>
-                <label>
-                    Category:
-                    <select value={category} onChange={(e) => setCategory(e.target.value)}>
-                        {categories.map((cat) => (
-                            <option key={cat.value} value={cat.value}>
-                                {cat.label}
-                            </option>
-                        ))}
-                    </select>
-                </label>
-                <label>
-                    Description:
-                    <textarea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        placeholder="Enter a description for the board"
-                    />
-                </label>
-                <label>
-                    Author:
-                    <input
-                        type="text"
-                        value={author}
-                        onChange={(e) => setAuthor(e.target.value)}
-                        placeholder="Enter the author's name"
-                    />
-                </label>
-                <label>
-                    Search Giphy Image:
-                    <input
-                        type='text'
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                    />
-                    <button onClick={handleSearchSubmit}>Search</button>
-                </label>
+        <form onSubmit={handleSubmit} className="modalForm">
+            <label className="titleLabel">
+                Board Name:
+                <input
+                    type='text'
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="titleInput"
+                />
+            </label>
+            <label className="categoryLabel">
+                Category:
+                <select value={category} onChange={(e) => setCategory(e.target.value)} className="categorySelect">
+                    {categories.map((cat) => (
+                        <option key={cat.value} value={cat.value}>
+                            {cat.label}
+                        </option>
+                    ))}
+                </select>
+            </label>
+            <label className="descriptionLabel">
+                Description:
+                <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Enter a description for the board"
+                    className="messageTextarea"
+                />
+            </label>
+            <label className="authorLabel">
+                Author:
+                <input
+                    type="text"
+                    value={author}
+                    onChange={(e) => setAuthor(e.target.value)}
+                    placeholder="Enter the author's name"
+                    className="creatorInput"
+                />
+            </label>
+            <label className="searchLabel">
+                Search Giphy Image:
+                <input
+                    type='text'
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    className="searchInput"
+                />
+                <button onClick={handleSearchSubmit} className="searchButton">Search</button>
+            </label>
+            <div className="gifContainer">
                 {showSelectedImage ? (
-                    <div>
+                    <div className="selectedGifContainer">
                         <img
                             src={imgUrl}
                             alt="Selected"
-                            style={{ maxWidth: '100%', display: 'block', margin: 'auto' }}
+                            className="selectedGif"
                         />
                     </div>
                 ) : (
-                    <div>
+                    <div className="imagesDisplay">
                         {images.map((image) => (
                             <img
                                 key={image.id}
                                 src={image.images.fixed_height.url}
                                 alt={image.title}
                                 onClick={() => handleImageSelect(image)}
-                                style={{ cursor: 'pointer', margin: '10px' }}
+                                className="gifImage"
                             />
                         ))}
                     </div>
                 )}
-                <button type='submit'>Submit</button>
-                <button onClick={closeModal}>Cancel</button>
-            </form>
-        </div>
+            </div>
+            <button type='submit' className="createCardButton">Submit</button>
+            <button onClick={closeModal} className="cancelButton">Cancel</button>
+        </form>
+    </div>
     );
 }
 

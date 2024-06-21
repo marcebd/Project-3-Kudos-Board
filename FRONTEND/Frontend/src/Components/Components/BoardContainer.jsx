@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Board from './Board';
 import BoardModal from './BoardModal';
+import './BoardContainer.css'
 
 function BoardContainer() {
     const [boards, setBoards] = useState([]);
@@ -76,6 +77,7 @@ function BoardContainer() {
 
     return (
         <div className='BoardContainer'>
+            <div className='sortsearch'>
             <input
                 type="text"
                 placeholder="Search boards..."
@@ -91,8 +93,11 @@ function BoardContainer() {
                     <option value="recent">Most Recent</option>
                     <option value="alphabetical">Alphabetical</option>
                 </select>
+            </div>
+            <div className='boards'>
                 {boardCards}
-                <button onClick={handleOpenModal}>Create Board</button>
+            </div>
+                <button onClick={handleOpenModal} className='createButton'>Create Board</button>
                 {isBoardModalOpen && <BoardModal closeModal={handleCloseModal} onCreateBoard={handleCreateBoard} />}
             </div>
         );

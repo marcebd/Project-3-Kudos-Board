@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react';
 import { GiphyFetch } from '@giphy/js-fetch-api';
+import './CardContainer.css'
 
 function CardModal({boardId, onClose, onCreateCard}) {
     const apiKey = import.meta.env.VITE_GIPHY_API_KEY;
@@ -11,7 +12,7 @@ function CardModal({boardId, onClose, onCreateCard}) {
     const [searchTerm, setSearchTerm] = useState('');
     const [gifs, setGifs] = useState([]);
     const [offset, setOffset] = useState(0);
-    const limit = 10;
+    const limit = 20;
 
     const fetchGifs = async () => {
         const {data} = await giphyFetch.search(searchTerm, {offset, limit});
@@ -43,7 +44,7 @@ function CardModal({boardId, onClose, onCreateCard}) {
             creator,
             GIFUrl,
             boardId,
-            upvotes: 0 
+            upvotes: 0
         };
 
         fetch(`http://localhost:3000/boards/${boardId}/cards`, {
@@ -68,69 +69,75 @@ function CardModal({boardId, onClose, onCreateCard}) {
 
     return (
         <div className='modal'>
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Title:
-                    <input
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder="Enter card title"
-                        aria-label="Card Title"
-                    />
-                </label>
-                <label>
-                    Message:
-                    <textarea
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        placeholder='Enter card message'
-                        aria-label="Card Message"
-                    />
-                </label>
-                <label>
-                    Creator:
-                    <input
-                        type="text"
-                        value={creator}
-                        onChange={(e) => setCreator(e.target.value)}
-                        placeholder="Enter creator's name"
-                        aria-label="Creator's Name"
-                    />
-                </label>
-                <label>
-                    Search Giphy Image:
-                    <input
-                        type='text'
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        aria-label="Search Giphy Image"
-                    />
-                    <button type='button' onClick={fetchGifs}>Search</button>
-                </label>
-                <div onScroll={handleScroll} style={{ overflowY: 'auto', height: '400px' }}>
-                    {gifs.map(gif => (
+        <form onSubmit={handleSubmit} className="modalForm">
+            <label className="titleLabel">
+                Title:
+                <input
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Enter card title"
+                    aria-label="Card Title"
+                    className="titleInput"
+                />
+            </label>
+            <label className="messageLabel">
+                Message:
+                <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder='Enter card message'
+                    aria-label="Card Message"
+                    className="messageTextarea"
+                />
+            </label>
+            <label className="creatorLabel">
+                Creator:
+                <input
+                    type="text"
+                    value={creator}
+                    onChange={(e) => setCreator(e.target.value)}
+                    placeholder="Enter creator's name"
+                    aria-label="Creator's Name"
+                    className="creatorInput"
+                />
+            </label>
+            <label className="searchLabel">
+                Search Giphy Image:
+                <input
+                    type='text'
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    aria-label="Search Giphy Image"
+                    className="searchInput"
+                />
+                <button type='button' onClick={fetchGifs} className="searchButton">Search</button>
+            </label>
+            <div onScroll={handleScroll} className="gifContainer" style={{ overflowY: 'auto', height: '400px' }}>
+                {GIFUrl ? (
+                    <div className="selectedGifContainer">
+                        <img src={GIFUrl} alt="Selected GIF" className="selectedGif" style={{ maxWidth: '100%', display: 'block', margin: 'auto' }} />
+                    </div>
+                ) : (
+                    gifs.map(gif => (
                         <img
                             key={gif.id}
                             src={gif.images.fixed_height.url}
                             alt={gif.title}
                             onClick={() => {
                                 setGIFUrl(gif.images.fixed_height.url);
-                                setGifs([]);  // Clear the GIFs array
+                                setGifs([]);  
                             }}
+                            className="gifImage"
                             style={{ cursor: 'pointer', margin: '10px' }}
                         />
-                    ))}
-                </div>
-                {GIFUrl && (
-                    <div>
-                        <img src={GIFUrl} alt="Selected GIF" style={{ maxWidth: '100%', display: 'block', margin: 'auto' }} />
-                    </div>
+                    ))
                 )}
-                <button type='submit'>Create Card</button>
-                <button type='button' onClick={onClose}>Cancel</button>
-            </form>
-        </div>
+            </div>
+            <button type='submit' className="createCardButton">Create Card</button>
+            <button type='button' onClick={onClose} className="cancelButton">Cancel</button>
+        </form>
+    </div>
     );
 }
 
