@@ -92,7 +92,7 @@ function BoardModal({ closeModal, onCreateBoard }) {
                                 {cat.label}
                             </option>
                         ))}
-                                        </select>
+                    </select>
                 </label>
                 <label>
                     Description:

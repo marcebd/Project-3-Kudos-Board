@@ -60,7 +60,6 @@ app.get('/boards/:id/cards', async (req, res) => {
                     title: true,
                     message: true,
                     GIFUrl: true,
-                    signature: true,
                     creator: true
                 }
             }
@@ -144,18 +143,24 @@ app.get('/cards/:id', async (req, res) => {
 });
 
 //Create a new card
-app.post('/cards', async (req, res) => {
-    const {creator, title, message, GIFUrl, signature} = req.body;
-    const newCard = await prisma.card.create({
-        data: {
-            creator,
-            title,
-            message,
-            GIFUrl,
-            signature
-        }
-    })
-    res.status(201).json(newCard);
+app.post('/boards/:boardId/cards', async (req, res) => {
+    const { creator, title, message, GIFUrl } = req.body;
+    const { boardId } = req.params;
+    try {
+        const newCard = await prisma.card.create({
+            data: {
+                creator,
+                title,
+                message,
+                GIFUrl,
+                boardId: parseInt(boardId)
+            }
+        });
+        res.status(201).json(newCard);
+    } catch (error) {
+        console.error('Error creating card:', error);
+        res.status(500).json({ error: 'Failed to create card', details: error.message });
+    }
 });
 
 //Delete a specific card

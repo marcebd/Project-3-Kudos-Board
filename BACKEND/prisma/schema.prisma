@@ -37,8 +37,7 @@ model Card {
   title String
   message String
   GIFUrl String
-  signature String
-  upvotes Int
+  upvotes Int?
   boardId  Int
   board Board @relation(fields:[boardId], references: [id])
 }
