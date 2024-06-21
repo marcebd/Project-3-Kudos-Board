@@ -98,7 +98,10 @@ function CardModal({boardId, onClose, onCreateCard}) {
                             key={gif.id}
                             src={gif.images.fixed_height.url}
                             alt={gif.title}
-                            onClick={() => setGIFUrl(gif.images.fixed_height.url)}
+                            onClick={() => {
+                                setGIFUrl(gif.images.fixed_height.url);
+                                setGifs([]);  // Clear the GIFs array
+                            }}
                             style={{ cursor: 'pointer', margin: '10px' }}
                         />
                     ))}

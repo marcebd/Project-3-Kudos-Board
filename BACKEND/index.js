@@ -19,7 +19,8 @@ app.get('/boards', async (req, res) => {
             imgUrl: true,
             id: true,
             title: true,
-            category: true
+            category: true,
+            description:true
         }
     });
     res.status(200).json(boards);
@@ -35,7 +36,9 @@ app.get('/boards/:id', async (req, res) => {
         select: {
             id: true,
             title: true,
-            category: true
+            category: true,
+            description: true,
+            imgUrl: true
         }
     });
 
