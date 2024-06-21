@@ -135,14 +135,25 @@ app.get('/cards', async (req, res) => {
     res.status(200).json(cards);
 });
 
-//Get specific card
+// Get specific card
 app.get('/cards/:id', async (req, res) => {
-    const {id} = req.params;
-    const card = await prisma.card.findUnique(
-        {
-            where: { id: parseInt(id) }
+    const { id } = req.params;
+    try {
+        const card = await prisma.card.findUnique({
+            where: {
+                id: parseInt(id)
+            }
         });
-    res.status(200).json(card);
+
+        if (card) {
+            res.status(200).json(card);
+        } else {
+            res.status(404).send('Card not found');
+        }
+    } catch (error) {
+        console.error('Error fetching card:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 //Create a new card
@@ -211,6 +222,7 @@ app.post('/cards/:cardId/comments', async (req, res) => {
         res.status(500).json({ message: 'Error adding comment' });
     }
 });
+
 //Get comments for a card
 app.get('/cards/:cardId/comments', async (req, res) => {
     const { cardId } = req.params;
@@ -228,21 +240,30 @@ app.get('/cards/:cardId/comments', async (req, res) => {
     }
 });
 
-//Delete a specific card
 app.delete('/cards/:id', async (req, res) => {
     const { id } = req.params;
+    const cardId = parseInt(id);
+
+    if (isNaN(cardId)) {
+        return res.status(400).send('Invalid card ID');
+    }
+
     try {
-        const deletedCard = await prisma.card.delete({
-            where: {
-                id: parseInt(id),
-            }
+        const result = await prisma.$transaction(async (prisma) => {
+            await prisma.comment.deleteMany({
+                where: { cardId: cardId }
+            });
+            return prisma.card.delete({
+                where: { id: cardId }
+            });
         });
-        res.status(200).json(deletedCard);
+        res.status(204).send(); 
     } catch (error) {
         if (error.code === 'P2025') {
-            res.status(404).send('Card not found');
-        } else {
-            res.status(500).send('Error deleting the card');
+            // Handle specific case where the card does not exist
+            return res.status(404).send('Card not found');
         }
+        console.error('Failed to delete card:', error);
+        res.status(500).send('Internal Server Error');
     }
 });

@@ -23,6 +23,7 @@ function CardContainer({ boardId }) {
             .then(data => {
                 setCards(data.cards);
                 setLoading(false);
+                console.log(data.cards)
             })
             .catch(error => {
                 console.error('Error fetching cards:', error);
