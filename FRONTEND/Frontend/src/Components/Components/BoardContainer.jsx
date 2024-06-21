@@ -7,6 +7,7 @@ function BoardContainer() {
     const [isBoardModalOpen, setBoardModalOpen] = useState(false);
     const [categoryFilter, setCategoryFilter] = useState('All');
     const [searchTerm, setSearchTerm] = useState('');
+    const [sortCriteria, setSortCriteria] = useState('recent');
     const categories = ['All', 'celebration', 'thankyou', 'inspiration', 'jokes', 'AITA'];
 
     useEffect(() => {
@@ -52,7 +53,16 @@ function BoardContainer() {
          board.description.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
-    const boardCards = filteredBoards.map(board => (
+    const sortedBoards = filteredBoards.sort((a, b) => {
+        if (sortCriteria === 'recent') {
+            return b.id - a.id; // Sort by descending ID for most recent
+        } else if (sortCriteria === 'alphabetical') {
+            return a.title.localeCompare(b.title); // Sort alphabetically by title
+        }
+        return 0;
+    });
+
+    const boardCards = sortedBoards.map(board => (
         <Board
             key={board.id}
             id={board.id}
@@ -71,17 +81,21 @@ function BoardContainer() {
                 placeholder="Search boards..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
-                {categories.map(category => (
-                    <option key={category} value={category}>{category}</option>
-                ))}
-            </select>
-            {boardCards}
-            <button onClick={handleOpenModal}>Create Board</button>
-            {isBoardModalOpen && <BoardModal closeModal={handleCloseModal} onCreateBoard={handleCreateBoard} />}
-        </div>
-    );
-}
+                />
+                <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
+                    {categories.map(category => (
+                        <option key={category} value={category}>{category}</option>
+                    ))}
+                </select>
+                <select value={sortCriteria} onChange={(e) => setSortCriteria(e.target.value)}>
+                    <option value="recent">Most Recent</option>
+                    <option value="alphabetical">Alphabetical</option>
+                </select>
+                {boardCards}
+                <button onClick={handleOpenModal}>Create Board</button>
+                {isBoardModalOpen && <BoardModal closeModal={handleCloseModal} onCreateBoard={handleCreateBoard} />}
+            </div>
+        );
+    }
 
-export default BoardContainer;
+    export default BoardContainer;
