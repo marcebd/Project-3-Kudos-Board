@@ -187,6 +187,47 @@ app.patch('/cards/:id/upvote', async (req, res) => {
     }
 });
 
+// Add a comment to a card
+app.post('/cards/:cardId/comments', async (req, res) => {
+    const { cardId } = req.params;
+    const { author, content } = req.body;
+    try {
+        const card = await prisma.card.findUnique({
+            where: { id: parseInt(cardId) },
+        });
+        if (!card) {
+            return res.status(404).json({ message: 'Card not found' });
+        }
+        const comment = await prisma.comment.create({
+            data: {
+                author,
+                content,
+                cardId: parseInt(cardId),
+            },
+        });
+        res.status(201).json(comment);
+    } catch (error) {
+        console.error('Failed to add comment:', error);
+        res.status(500).json({ message: 'Error adding comment' });
+    }
+});
+//Get comments for a card
+app.get('/cards/:cardId/comments', async (req, res) => {
+    const { cardId } = req.params;
+    try {
+        const comments = await prisma.comment.findMany({
+            where: { cardId: parseInt(cardId) },
+            orderBy: {
+                id: 'desc',
+            },
+        });
+        res.status(200).json(comments);
+    } catch (error) {
+        console.error('Failed to get comments:', error);
+        res.status(500).json({ message: 'Error retrieving comments' });
+    }
+});
+
 //Delete a specific card
 app.delete('/cards/:id', async (req, res) => {
     const { id } = req.params;

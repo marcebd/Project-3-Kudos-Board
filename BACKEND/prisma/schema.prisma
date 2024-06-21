@@ -38,6 +38,15 @@ model Card {
   message String
   GIFUrl String
   upvotes Int @default(0)
+  comments Comment[]
   boardId  Int
   board Board @relation(fields:[boardId], references: [id])
+}
+
+model Comment {
+  id      Int    @id @default(autoincrement()) @unique
+  author  String
+  content String
+  cardId  Int
+  card    Card    @relation(fields: [cardId], references: [id])
 }
