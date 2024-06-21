@@ -14,9 +14,11 @@ datasource db {
 }
 
 model Board {
-  id  Int @id @default(autoincrement()) @unique
+  id  Int @id @default(autoincrement())
   imgUrl  String
   title String @unique
+  author String?
+  description String?
   category Category
   cards Card[]
 }

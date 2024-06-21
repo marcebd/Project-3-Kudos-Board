@@ -1,16 +1,17 @@
 import React from 'react';
-import {useState} from 'react';
 
-
-function Board({imgUrl, title}) {
-
-    return(
+function Board({ id, imgUrl, title, description, author, onDelete }) {
+    return (
         <div className='board'>
-            <img src={imgUrl} className='boardImage'/>
-            <h1>{title}</h1>
+            <div className='boardInformation'>
+                <img src={imgUrl} alt={title} className='boardImage' />
+                <h1>{title}</h1>
+                <p>{description}</p>
+                <p>{author}</p>
+            </div>
+            <button onClick={() => onDelete(id)}>Delete Board</button>
         </div>
-    )
-
+    );
 }
 
 export default Board;

@@ -75,11 +75,13 @@ app.get('/boards/:id/cards', async (req, res) => {
 
 //Create a new board
 app.post('/boards', async (req, res) => {
-    const {imgUrl, title, category} = req.body;
+    const {imgUrl, title, description, author, category} = req.body;
     const newBoard = await prisma.board.create({
         data: {
             imgUrl,
             title,
+            description,
+            author,
             category
         }
     })
@@ -89,26 +91,37 @@ app.post('/boards', async (req, res) => {
 //Delete a board and all its cards
 app.delete('/boards/:id', async (req, res) => {
     const { id } = req.params;
+    const boardId = parseInt(id);
+
     try {
-        const result = await prisma.$transaction([
-            prisma.card.deleteMany({
-                where: {
-                    boardId: parseInt(id),
-                }
-            }),
-            prisma.board.delete({
-                where: {
-                    id: parseInt(id),
-                }
-            })
-        ]);
+        // First, check if there are any cards associated with the board
+        const cards = await prisma.card.findMany({
+            where: { boardId: boardId }
+        });
+
+        if (cards.length > 0) {
+            // If cards exist, delete them along with the board
+            await prisma.$transaction([
+                prisma.card.deleteMany({
+                    where: { boardId: boardId }
+                }),
+                prisma.board.delete({
+                    where: { id: boardId }
+                })
+            ]);
+        } else {
+            // If no cards exist, just delete the board
+            await prisma.board.delete({
+                where: { id: boardId }
+            });
+        }
         res.status(200).json({ message: 'Board and associated cards deleted successfully' });
     } catch (error) {
         console.error('Error:', error);
         if (error.code === 'P2025') {
             res.status(404).send('Board not found');
         } else {
-            res.status(500).send('Failed to delete the board and its cards');
+            res.status(500).send(`Failed to delete the board and its cards: ${error.message}`);
         }
     }
 });
