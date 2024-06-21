@@ -6,6 +6,7 @@ function BoardContainer() {
     const [boards, setBoards] = useState([]);
     const [isBoardModalOpen, setBoardModalOpen] = useState(false);
     const [categoryFilter, setCategoryFilter] = useState('All');
+    const [searchTerm, setSearchTerm] = useState('');
     const categories = ['All', 'celebration', 'thankyou', 'inspiration', 'jokes', 'AITA'];
 
     useEffect(() => {
@@ -15,12 +16,8 @@ function BoardContainer() {
     const fetchBoards = () => {
         fetch(`${import.meta.env.VITE_BACKEND_ADDRESS}/boards`)
             .then(response => response.json())
-            .then(data => {
-                setBoards(data);
-            })
-            .catch(error => {
-                console.error('Error fetching boards:', error);
-            });
+            .then(data => setBoards(data))
+            .catch(error => console.error('Error fetching boards:', error));
     };
 
     const handleOpenModal = () => {
@@ -46,13 +43,15 @@ function BoardContainer() {
             }
             setBoards(prevBoards => prevBoards.filter(board => board.id !== boardId));
         })
-        .catch(error => {
-            console.error('Error deleting board:', error);
-        });
+        .catch(error => console.error('Error deleting board:', error));
     };
 
-    const filteredBoards = boards.filter(board => categoryFilter === 'All' || board.category === categoryFilter);
-    console.log(filteredBoards)
+    const filteredBoards = boards.filter(board =>
+        (categoryFilter === 'All' || board.category === categoryFilter) &&
+        (board.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+         board.description.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+
     const boardCards = filteredBoards.map(board => (
         <Board
             key={board.id}
@@ -67,6 +66,12 @@ function BoardContainer() {
 
     return (
         <div className='BoardContainer'>
+            <input
+                type="text"
+                placeholder="Search boards..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+            />
             <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
                 {categories.map(category => (
                     <option key={category} value={category}>{category}</option>
