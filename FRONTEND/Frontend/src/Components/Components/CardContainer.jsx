@@ -16,7 +16,6 @@ function CardContainer({ boardId }) {
 
     useEffect(() => {
         const sorted = [...cards].sort((a, b) => {
-            console.log(`Comparing ${a.title} with ${b.title} and ${a.upvotes} with ${b.upvotes}`);
             if (sortCriteria === 'upvotes') {
                 return b.upvotes - a.upvotes;
             } else if (sortCriteria === 'alphabetical') {
@@ -24,7 +23,6 @@ function CardContainer({ boardId }) {
             }
             return 0;
         });
-        console.log(sorted.map(card => `${card.title}: ${card.upvotes}`));
         setSortedCards(sorted);
     }, [cards, sortCriteria]);
     const fetchCards = () => {
@@ -40,7 +38,6 @@ function CardContainer({ boardId }) {
                     ...card,
                     upvotes: Number(card.upvotes)
                 }));
-                console.log("fetch data",data)
                 setCards(cardsWithNumericUpvotes);
                 setLoading(false);
             })
