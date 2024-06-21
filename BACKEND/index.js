@@ -1,11 +1,13 @@
 const express = require('express')
 const app = express()
 app.use(express.json())
-
+const cors = require('cors')
 const PORT = process.env.PORT || 3000
 
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
+app.use(cors());
+
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`)
   })
@@ -71,12 +73,6 @@ app.get('/boards/:id/cards', async (req, res) => {
     }
 });
 
-//Return all the boards objects
-app.get('/boards', async (req, res) => {
-    const board = await prisma.board.findMany();
-    res.status(200).json(board);
-});
-
 //Create a new board
 app.post('/boards', async (req, res) => {
     const {imgUrl, title, category} = req.body;
@@ -117,18 +113,7 @@ app.delete('/boards/:id', async (req, res) => {
     }
 });
 
-//Get specific board
-app.get('/boards/:id', async (req, res) => {
-    const {id} = req.params;
-    const board = await prisma.board.findUnique(
-        {
-            where: { id: parseInt(id) }
-        });
-    res.status(200).json(board);
-});
-
 /*********************** CARDS ***********************/
-
 // Return all the cards objects
 app.get('/cards', async (req, res) => {
     const card = await prisma.card.findMany();
@@ -160,7 +145,7 @@ app.post('/cards', async (req, res) => {
     res.status(201).json(newCard);
 });
 
-//Delete a card
+//Delete a specific card
 app.delete('/cards/:id', async (req, res) => {
     const { id } = req.params;
     try {
