@@ -147,7 +147,7 @@ app.get('/cards/:id', async (req, res) => {
 
 //Create a new card
 app.post('/boards/:boardId/cards', async (req, res) => {
-    const { creator, title, message, GIFUrl } = req.body;
+    const { creator, title, message, GIFUrl, author } = req.body;
     const { boardId } = req.params;
     try {
         const newCard = await prisma.card.create({
@@ -156,13 +156,34 @@ app.post('/boards/:boardId/cards', async (req, res) => {
                 title,
                 message,
                 GIFUrl,
-                boardId: parseInt(boardId)
+                boardId: parseInt(boardId),
+                author,
+                upvotes: 0
             }
         });
         res.status(201).json(newCard);
     } catch (error) {
         console.error('Error creating card:', error);
         res.status(500).json({ error: 'Failed to create card', details: error.message });
+    }
+});
+
+// Update upvotes for a specific card
+app.patch('/cards/:id/upvote', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const updatedCard = await prisma.card.update({
+            where: { id: parseInt(id) },
+            data: {
+                upvotes: {
+                    increment: 1
+                }
+            }
+        });
+        res.status(200).json(updatedCard);
+    } catch (error) {
+        console.error('Error updating upvotes:', error);
+        res.status(500).json({ error: "Failed to update upvotes" });
     }
 });
 

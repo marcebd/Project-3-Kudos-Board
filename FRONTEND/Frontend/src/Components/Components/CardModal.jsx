@@ -37,17 +37,33 @@ function CardModal({boardId, onClose, onCreateCard}) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const cardData = {
+            title,
+            message,
+            creator,
+            GIFUrl,
+            boardId,
+            upvotes: 0 
+        };
+
         fetch(`http://localhost:3000/boards/${boardId}/cards`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, message, creator, GIFUrl, boardId })
+            body: JSON.stringify(cardData)
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to create card');
+            }
+            return response.json();
+        })
         .then(data => {
             onCreateCard(data);
             onClose();
         })
-        .catch(error => console.error('Error creating card:', error));
+        .catch(error => {
+            console.error('Error creating card:', error);
+        });
     };
 
     return (

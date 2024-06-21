@@ -58,6 +58,7 @@ function CardContainer({ boardId }) {
             message={card.message}
             creator={card.creator}
             GIFUrl={card.GIFUrl}
+            upvotes={card.upvotes}
             onDelete={handleDeleteCard}
         />
     ));

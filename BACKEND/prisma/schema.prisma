@@ -16,7 +16,7 @@ datasource db {
 model Board {
   id  Int @id @default(autoincrement())
   imgUrl  String
-  title String 
+  title String
   author String?
   description String?
   category Category
@@ -37,7 +37,7 @@ model Card {
   title String
   message String
   GIFUrl String
-  upvotes Int?
+  upvotes Int @default(0)
   boardId  Int
   board Board @relation(fields:[boardId], references: [id])
 }
