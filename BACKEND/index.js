@@ -91,40 +91,48 @@ app.post('/boards', async (req, res) => {
     res.status(201).json(newBoard);
 });
 
-//Delete a board and all its cards
+// Delete a board and all its cards, checking and deleting comments first
 app.delete('/boards/:id', async (req, res) => {
     const { id } = req.params;
     const boardId = parseInt(id);
 
     try {
-        // First, check if there are any cards associated with the board
-        const cards = await prisma.card.findMany({
-            where: { boardId: boardId }
-        });
+        // Start a transaction to ensure all deletions are processed together
+        await prisma.$transaction(async (prisma) => {
+            // First, find all cards associated with the board
+            const cards = await prisma.card.findMany({
+                where: { boardId: boardId },
+                include: { comments: true }  // Include comments to check existence
+            });
 
-        if (cards.length > 0) {
-            // If cards exist, delete them along with the board
-            await prisma.$transaction([
-                prisma.card.deleteMany({
-                    where: { boardId: boardId }
-                }),
-                prisma.board.delete({
-                    where: { id: boardId }
-                })
-            ]);
-        } else {
-            // If no cards exist, just delete the board
+            // Iterate over each card to delete comments first
+            for (const card of cards) {
+                if (card.comments.length > 0) {
+                    // Delete comments if they exist
+                    await prisma.comment.deleteMany({
+                        where: { cardId: card.id }
+                    });
+                }
+            }
+
+            // After deleting comments, delete the cards
+            await prisma.card.deleteMany({
+                where: { boardId: boardId }
+            });
+
+            // Finally, delete the board
             await prisma.board.delete({
                 where: { id: boardId }
             });
-        }
-        res.status(200).json({ message: 'Board and associated cards deleted successfully' });
+        });
+
+        res.status(200).json({ message: 'Board, associated cards, and comments deleted successfully' });
     } catch (error) {
         console.error('Error:', error);
         if (error.code === 'P2025') {
             res.status(404).send('Board not found');
         } else {
-            res.status(500).send(`Failed to delete the board and its cards: ${error.message}`);
+            res.status(500).send(`Failed to delete the board, its cards, and comments: ${error.message}`);
         }
     }
 });
