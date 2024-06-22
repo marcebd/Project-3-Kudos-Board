@@ -1,0 +1,87 @@
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 600px;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(244, 143, 177, 0.6);
+    border-radius: 8px;
+    z-index: 1000;
+}
+
+.modalForm {
+    display: flex;
+    flex-direction: column;
+}
+
+.titleLabel, .messageLabel, .creatorLabel, .searchLabel {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.titleInput, .creatorInput, .searchInput, .messageTextarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #f48fb1;
+    border-radius: 4px;
+}
+
+.messageTextarea {
+    height: 100px;
+    resize: none;
+}
+
+.cardContainer {
+    height: 65vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    background-color: #fff;
+    margin-top: 2%;
+}
+
+.searchButton, .createCardButton, .cancelButton {
+    background-color: #f48fb1;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.searchButton:hover, .createCardButton:hover, .cancelButton:hover {
+    background-color: #f06292;
+}
+
+.gifContainer {
+    overflow-y: auto;
+    height: 400px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.gifImage {
+    width: 100px;
+    height: 100px;
+    margin: 5px;
+    border-radius: 4px;
+}
+
+.selectedGifContainer {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.selectedGif {
+    max-width: 100%;
+    display: block;
+    margin: auto;
+}

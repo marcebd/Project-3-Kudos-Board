@@ -1,0 +1,19 @@
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 75%;
+    height: auto;
+    padding: 20px;
+    margin: 1% auto 1% auto;
+    box-shadow: 0px 4px 8px rgba(244, 143, 177, 0.6);
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+.headerTitle {
+    font-size: 2rem;
+    color: #333;
+    text-shadow: 3px 3px 0px #f48fb1, 6px 6px 0px rgba(0,0,0,0.2);
+    font-weight: bold;
+}

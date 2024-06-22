@@ -14,9 +14,11 @@ datasource db {
 }
 
 model Board {
-  id  Int @id @default(autoincrement()) @unique
+  id  Int @id @default(autoincrement())
   imgUrl  String
-  title String @unique
+  title String
+  author String?
+  description String?
   category Category
   cards Card[]
 }
@@ -35,8 +37,16 @@ model Card {
   title String
   message String
   GIFUrl String
-  signature String
-  upvotes Int
+  upvotes Int @default(0)
+  comments Comment[]
   boardId  Int
   board Board @relation(fields:[boardId], references: [id])
+}
+
+model Comment {
+  id      Int    @id @default(autoincrement()) @unique
+  author  String
+  content String
+  cardId  Int
+  card    Card    @relation(fields: [cardId], references: [id])
 }

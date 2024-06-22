@@ -11,7 +11,9 @@
   "description": "",
   "dependencies": {
     "@prisma/client": "^5.15.1",
-    "express": "^4.19.2"
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "react-router-dom": "^6.23.1"
   },
   "devDependencies": {
     "prisma": "^5.15.1"
